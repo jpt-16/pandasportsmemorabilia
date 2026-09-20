@@ -32,7 +32,7 @@ api/products.js        serverless function: list active Stripe products
 api/config.js          serverless function: hands the Stripe publishable key to the browser
 api/setup-intent.js    serverless function: create a Stripe Customer + SetupIntent (save a card)
 api/order.js           serverless function: reserve an item -> archive + email (no charge)
-api/webhook.js         serverless function: invoice.paid -> "you've been charged" email
+api/webhook.js         serverless function: invoice.paid -> "you've been charged" email + PDF
 package.json           declares the two dependencies (resend, stripe) + Node version
 .env.example           the environment variables the api/ functions need
 tools/sync-chrome.py   keeps the header/footer identical across pages
@@ -178,7 +178,10 @@ un-invoiced (and uncharged) indefinitely.
    the `invoice.paid` event — that's what fires the moment an
    automatically-collected invoice actually charges a buyer's saved card,
    and it's the only thing that triggers the "you've been charged, it's
-   on its way" email. Copy the endpoint's signing secret into
+   on its way" email — sent with a real invoice PDF attached (fetched
+   from Stripe's `invoice_pdf` URL, which is publicly fetchable with no
+   API key needed), so the buyer gets a proper receipt regardless of any
+   Stripe dashboard email setting. Copy the endpoint's signing secret into
    `STRIPE_WEBHOOK_SECRET`. Nothing else in this flow needs Stripe to call
    back into the site — reserving doesn't, and finalizing an invoice is a
    manual Dashboard action, not something the site triggers.
