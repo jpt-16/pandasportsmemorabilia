@@ -633,7 +633,12 @@ textarea)[aria-invalid="true"]{border-color:var(--warn);box-shadow:0 0 0 3px rgb
   scrollbar-width:none;-ms-overflow-style:none;
 }
 .shop-card__gallery::-webkit-scrollbar{display:none}
-.shop-card__gallery img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;display:block;scroll-snap-align:start}
+/* object-position:top — most product photos are taller than this box's
+   4:3 ratio, and the subject (a jersey's name/number, a label) is almost
+   always near the top of the frame; cropping from the top down loses the
+   least. Pre-cropping a photo to 4:3 beforehand still gives the most
+   control over exactly what shows. */
+.shop-card__gallery img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;object-position:top;display:block;scroll-snap-align:start}
 .shop-card__dots{position:absolute;left:50%;bottom:.6rem;transform:translateX(-50%);display:flex;gap:.35rem}
 .shop-card__dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(0,0,0,.15)}
 .shop-card__dots span.is-active{background:#fff}
