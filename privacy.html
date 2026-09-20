@@ -140,7 +140,7 @@
       <p>If you write to <a href="mailto:info@pandasportsmemorabilia.com">info@pandasportsmemorabilia.com</a>, we receive whatever you choose to send &mdash; your address, your name if you give it, and the contents of your message &mdash; the same as any email, kept in an ordinary inbox Jake reads.</p>
 
       <h3>Placing an order</h3>
-      <p>Reserving an item on the shop gives us the ordinary details needed to ship it &mdash; your name, delivery address and email. No payment information is collected at that point; we don't ask for or see a card number on this site at all. Once your item ships, Stripe (our payment processor) emails you an invoice directly and handles the payment itself &mdash; your card details go to them, not to us, under their own security standards.</p>
+      <p>Reserving an item on the shop gives us the ordinary details needed to ship it &mdash; your name, delivery address and email &mdash; and saves a card with Stripe, our payment processor, for the charge that happens once it ships. The card itself is entered directly into a field Stripe controls, embedded on our page; the number never reaches our servers, only theirs, under their own security standards.</p>
     </div>
   </section>
 
@@ -149,7 +149,7 @@
       <h2 class="secthead__title">Cookies &amp; other tech</h2>
       <p>This site sets no cookies of its own and runs no analytics or advertising trackers &mdash; nothing watches how you browse it.</p>
       <p>The one outside connection is Google Fonts: your browser requests a couple of typefaces from Google's own servers to render this page, which &mdash; like any request to Google &mdash; can expose your IP address to them under <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a>. We use it for the type, not for tracking, but we can't speak for what Google does on their end.</p>
-      <p>Paying an invoice happens on Stripe's own hosted page, not ours &mdash; whatever cookies Stripe sets there are covered by <a href="https://stripe.com/privacy" rel="noopener">Stripe's own privacy policy</a>, not this one. We ship through FedEx, UPS or another reputable carrier depending on the order; tracking a package on their site is subject to their own cookie and privacy policy, not ours.</p>
+      <p>The card field on the reservation form is Stripe's own, loaded directly from Stripe via a script called Stripe.js &mdash; it can set its own cookies as you use it, mainly for fraud prevention, covered by <a href="https://stripe.com/privacy" rel="noopener">Stripe's own privacy policy</a>, not this one. We ship through FedEx, UPS or another reputable carrier depending on the order; tracking a package on their site is subject to their own cookie and privacy policy, not ours.</p>
     </div>
   </section>
 
@@ -157,7 +157,7 @@
     <div class="wrap legal">
       <h2 class="secthead__title">Who sees it</h2>
       <p>Nobody outside Panda reads what you send us &mdash; in practice, that's Jake. We don't sell, rent or trade contact information &mdash; not to advertisers, not to data brokers, not to anyone.</p>
-      <p>The mailing list address above is <a href="https://resend.com" rel="noopener">Resend</a>, and order reservations go through the same service, plus <a href="https://stripe.com" rel="noopener">Stripe</a>, our payment processor, once your item ships and we send an invoice, and whichever of FedEx, UPS or another reputable carrier ships your order &mdash; they see your name and address, nothing else. Each of them sees only what they need to do their one job &mdash; hold an email list, send an invoice, charge a card, deliver a package &mdash; never the whole picture.</p>
+      <p>The mailing list address above is <a href="https://resend.com" rel="noopener">Resend</a>, and order reservations go through the same service, plus <a href="https://stripe.com" rel="noopener">Stripe</a>, our payment processor, which sees your card details directly (we don't) and charges it once your item ships, and whichever of FedEx, UPS or another reputable carrier ships your order &mdash; they see your name and address, nothing else. Each of them sees only what they need to do their one job &mdash; hold an email list, hold a card and charge it, deliver a package &mdash; never the whole picture.</p>
     </div>
   </section>
 

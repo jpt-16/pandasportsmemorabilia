@@ -1,10 +1,13 @@
 /* Shop page only. Fetches the live product list from /api/products
    (which reads straight from Stripe's Product catalog — that's the
    inventory system, there's no separate database) and renders it.
-   "Reserve this item" opens an inline order form (name + shipping
-   address, no card) that posts to /api/order. No payment happens on
-   this page at all — the item is reserved, and the buyer is invoiced
-   separately once it ships. */
+   "Reserve this item" opens an inline order form: name + shipping
+   address, plus a card collected directly by Stripe's own embedded
+   field (assets/js/shop.js never sees the card number — Stripe.js
+   tokenizes it and hands back a payment method id). Submitting saves
+   that card on a Stripe Customer and reserves the item; no charge
+   happens on this page. The card is charged later, automatically,
+   once the item ships (see api/order.js and README.md). */
 (function () {
   'use strict';
 
@@ -12,6 +15,16 @@
   if (!root) return;
 
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  var CARD_STYLE = {
+    base: {
+      color: '#0B0B0C',
+      fontFamily: '"Barlow", system-ui, -apple-system, "Segoe UI", sans-serif',
+      fontSize: '16px',
+      '::placeholder': { color: '#585D63' }
+    },
+    invalid: { color: '#E0453A' }
+  };
 
   function money(amount, currency) {
     try {
@@ -24,7 +37,7 @@
     }
   }
 
-  function buildCard(item) {
+  function buildCard(item, stripe) {
     var li = document.createElement('li');
     li.className = 'shop-card';
     li.innerHTML =
@@ -51,7 +64,9 @@
       '  <input class="order-form__state" type="text" autocomplete="address-level1" placeholder="State" required>' +
       '  <label class="sr">ZIP code</label>' +
       '  <input class="order-form__zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="ZIP" required>' +
-      '  <p class="order-form__fine">US shipping only for now. No card, no payment here — we’ll invoice you once it ships.</p>' +
+      '  <label class="sr">Card details</label>' +
+      '  <div class="order-form__card"></div>' +
+      '  <p class="order-form__fine">US shipping only for now. Your card is saved securely with Stripe and charged automatically once your order ships &mdash; nothing is charged today.</p>' +
       '  <div class="hp" aria-hidden="true">' +
       '    <label>Leave this field blank</label>' +
       '    <input class="order-form__hp" type="text" tabindex="-1" autocomplete="off">' +
@@ -75,9 +90,32 @@
     var cancelBtn = li.querySelector('.order-form__cancel');
     var msg = li.querySelector('.order-form__msg');
 
+    // Mounted lazily, on first reveal, rather than while the form is still
+    // `hidden` — a Stripe Element mounted into a display:none container can
+    // size itself to zero and stay that way even after the container
+    // becomes visible.
+    var cardElement = null;
+
     buyBtn.addEventListener('click', function () {
       buyBtn.hidden = true;
       form.hidden = false;
+
+      if (!cardElement) {
+        var elements = stripe.elements();
+        cardElement = elements.create('card', { style: CARD_STYLE });
+        var cardContainer = form.querySelector('.order-form__card');
+        cardElement.mount(cardContainer);
+        cardElement.on('focus', function () {
+          cardContainer.classList.add('is-focused');
+        });
+        cardElement.on('blur', function () {
+          cardContainer.classList.remove('is-focused');
+        });
+        cardElement.on('change', function (event) {
+          cardContainer.classList.toggle('is-invalid', !!event.error);
+        });
+      }
+
       form.querySelector('.order-form__name').focus();
     });
 
@@ -110,29 +148,65 @@
       submitBtn.disabled = true;
       cancelBtn.disabled = true;
       delete msg.dataset.state;
-      msg.textContent = 'Reserving…';
+      msg.textContent = 'Saving your card…';
 
       var idempotencyKey =
         window.crypto && window.crypto.randomUUID
           ? window.crypto.randomUUID()
           : String(Date.now()) + '-' + Math.random().toString(36).slice(2);
 
-      fetch('/api/order', {
+      fetch('/api/setup-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId: item.priceId,
-          name: name,
-          email: email,
-          address1: address1,
-          address2: address2,
-          city: city,
-          state: state,
-          zip: zip,
-          company: honeypot,
-          idempotencyKey: idempotencyKey
-        })
+        body: JSON.stringify({ email: email, company: honeypot })
       })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            return { httpOk: response.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!(result.httpOk && result.data && result.data.ok && result.data.clientSecret)) {
+            throw new Error((result.data && result.data.message) || '');
+          }
+
+          var clientSecret = result.data.clientSecret;
+          var customerId = result.data.customerId;
+
+          return stripe
+            .confirmCardSetup(clientSecret, {
+              payment_method: {
+                card: cardElement,
+                billing_details: { name: name, email: email }
+              }
+            })
+            .then(function (setupResult) {
+              if (setupResult.error) {
+                throw new Error(setupResult.error.message || "That card didn't go through.");
+              }
+
+              msg.textContent = 'Reserving…';
+
+              return fetch('/api/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  priceId: item.priceId,
+                  name: name,
+                  email: email,
+                  address1: address1,
+                  address2: address2,
+                  city: city,
+                  state: state,
+                  zip: zip,
+                  customerId: customerId,
+                  paymentMethodId: setupResult.setupIntent.payment_method,
+                  company: honeypot,
+                  idempotencyKey: idempotencyKey
+                })
+              });
+            });
+        })
         .then(function (response) {
           return response.json().then(function (data) {
             return { httpOk: response.ok, data: data };
@@ -156,7 +230,7 @@
     return li;
   }
 
-  function render(items) {
+  function render(items, stripe) {
     if (!items.length) {
       root.innerHTML =
         '<p class="shop-state">Nothing listed right now — check back soon, or ' +
@@ -166,24 +240,37 @@
     var grid = document.createElement('ul');
     grid.className = 'shop-grid';
     items.forEach(function (item) {
-      grid.appendChild(buildCard(item));
+      grid.appendChild(buildCard(item, stripe));
     });
     root.innerHTML = '';
     root.appendChild(grid);
   }
 
-  fetch('/api/products')
-    .then(function (response) {
+  function fetchJson(url, options) {
+    return fetch(url, options).then(function (response) {
       return response.json().then(function (data) {
         return { httpOk: response.ok, data: data };
       });
-    })
-    .then(function (result) {
-      if (result.httpOk && result.data && result.data.ok) {
-        render(result.data.items || []);
-        return;
+    });
+  }
+
+  Promise.all([fetchJson('/api/config'), fetchJson('/api/products')])
+    .then(function (results) {
+      var configResult = results[0];
+      var productsResult = results[1];
+
+      if (!(configResult.httpOk && configResult.data && configResult.data.ok && configResult.data.publishableKey)) {
+        throw new Error('config');
       }
-      throw new Error();
+      if (!(productsResult.httpOk && productsResult.data && productsResult.data.ok)) {
+        throw new Error('products');
+      }
+      if (typeof window.Stripe !== 'function') {
+        throw new Error('stripe.js');
+      }
+
+      var stripe = window.Stripe(configResult.data.publishableKey);
+      render(productsResult.data.items || [], stripe);
     })
     .catch(function () {
       root.innerHTML =

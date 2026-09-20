@@ -647,6 +647,12 @@ textarea)[aria-invalid="true"]{border-color:var(--warn);box-shadow:0 0 0 3px rgb
 }
 .order-form input::placeholder{color:var(--fg-dim)}
 .order-form input:focus{outline:none;border-color:var(--accentfg);box-shadow:0 0 0 3px rgba(64,183,91,.18)}
+.order-form__card{
+  background:var(--panel);width:100%;box-sizing:border-box;
+  border:1.5px solid rgba(18,19,21,.26);border-radius:var(--r);padding:.95rem .95rem;
+}
+.order-form__card.is-focused{border-color:var(--accentfg);box-shadow:0 0 0 3px rgba(64,183,91,.18)}
+.order-form__card.is-invalid{border-color:var(--warn);box-shadow:0 0 0 3px rgba(224,69,58,.2)}
 .order-form__fine{margin:.1rem 0 0;font-size:.78rem;line-height:1.5;color:var(--fg-dim)}
 .order-form__actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:.2rem}
 

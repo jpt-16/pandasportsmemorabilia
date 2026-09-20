@@ -17,7 +17,7 @@ work when the API routes are actually running — on Vercel, or via
 ```
 index.html             homepage — hero, why, how, what's coming, family, signup
 shop.html              live product listing, pulled from Stripe — "reserve" opens an order form
-shop-success.html      where the site sends a buyer after reserving (no payment yet)
+shop-success.html      where the site sends a buyer after reserving (card saved, not charged)
 about.html             origin story, vault, team, philosophy, figures
 faq.html               authentication, shipping, sales policy, payment
 privacy.html           what we collect, cookies, your rights
@@ -25,11 +25,13 @@ refunds.html           all sales final — no refunds, returns or exchanges
 terms.html             the rules for using the site and buying from us
 assets/css/styles.css  design tokens + every component style
 assets/js/main.js      mobile menu, email signups, FAQ accordions
-assets/js/shop.js      shop.html only — fetches products, drives the order form
+assets/js/shop.js      shop.html only — fetches products, Stripe Card Element, order form
 assets/brand/           logo, mark, and favicon files
 api/subscribe.js       serverless function: signup -> Resend audience
 api/products.js        serverless function: list active Stripe products
-api/order.js           serverless function: reserve an item -> archive + email (no payment)
+api/config.js          serverless function: hands the Stripe publishable key to the browser
+api/setup-intent.js    serverless function: create a Stripe Customer + SetupIntent (save a card)
+api/order.js           serverless function: reserve an item -> archive + email (no charge)
 package.json           declares the two dependencies (resend, stripe) + Node version
 .env.example           the environment variables the api/ functions need
 tools/sync-chrome.py   keeps the header/footer identical across pages
@@ -94,68 +96,99 @@ Product catalog is the inventory system.** Add a Product in the Stripe
 Dashboard (name, description, one or more images, a one-time Price) and
 it appears on `shop.html`; archive it there once it sells and it
 disappears from the site. `api/products.js` lists active products, and
-`api/order.js` handles whatever someone submits after clicking "Reserve
-this item" — see "Reserve now, invoice on ship" below for the whole flow.
+`api/setup-intent.js` + `api/order.js` together handle whatever someone
+submits after clicking "Reserve this item" — see "Reserve now, save the
+card, charge on ship" below for the whole flow.
 
-### Reserve now, invoice on ship
+### Reserve now, save the card, charge on ship
 
-There's no card entry anywhere on the site. Clicking "Reserve this item"
-opens an inline form for name + shipping address; submitting it POSTs to
-`api/order.js`, which archives the Stripe Product (so it can't be
-reserved twice) and sends two emails — a "you're reserved, no charge yet"
-note to the buyer, and a "pack this up" notice to `support@` with the
-shipping details (see the info@/support@ split above: `info@` is the
-automated sender, `support@` is the human inbox both land in).
+Clicking "Reserve this item" opens an inline form for name, shipping
+address, and a card — the card field itself is Stripe's own, embedded on
+the page via Stripe.js (loaded in `shop.html`, wired up in
+`assets/js/shop.js`), so the raw card number never reaches our server,
+only Stripe's. That's what keeps this out of PCI-compliance territory
+beyond the simplest tier: we're never the one handling card data.
 
-No money moves at this point at all — not authorized, not held, nothing.
+What actually happens on submit, in order:
 
-**The buyer is only ever charged once, by an invoice sent after the item
+1. The browser POSTs `{ email }` to `api/setup-intent.js`, which creates a
+   Stripe Customer and a SetupIntent (`usage: 'off_session'` — this is
+   what allows the saved card to be charged later without the buyer
+   present) and returns a client secret.
+2. The browser calls `stripe.confirmCardSetup()` with that secret and the
+   Card Element — this is the step where the card details actually leave
+   the browser, going straight to Stripe, never through our server. It
+   comes back with a payment method id.
+3. The browser POSTs everything else — name, address, that customer id
+   and payment method id — to `api/order.js`, which: confirms the payment
+   method really belongs to that customer, saves it as their **default
+   payment method** and records their shipping address on the Stripe
+   Customer, archives the Stripe Product (so it can't be reserved twice),
+   and sends two emails — a "you're reserved, card saved, not charged
+   yet" note to the buyer, and a "pack this up" notice to `support@` with
+   the shipping details and the Stripe Customer id (see the info@/support@
+   split above: `info@` is the automated sender, `support@` is the human
+   inbox both land in).
+
+No charge happens at any point in that sequence — the card is saved, not
+billed.
+
+**The buyer is only ever charged once, automatically, after the item
 actually ships:**
 
-**Stripe Dashboard → Invoices → Create invoice** (customer email from the
-order notification, one line item for the price, no need to touch
-Products — draft invoices aren't tied to a Product record) **→ Send.**
-Stripe emails the buyer a hosted invoice page; paying it is the only
-place a card is ever charged. The Stripe MCP connector can also create
-and send one directly if asked to, using the order details from the
+**Stripe Dashboard → Invoices → Create invoice** for that customer, one
+line item for the price, collection method set to **"Charge
+automatically"** (not "Send invoice") **→ Finalize.** Because the card is
+already saved as the customer's default payment method, Stripe charges it
+on its own the moment the invoice is finalized — no email for the buyer
+to open, no button for them to click. The Stripe MCP connector can also
+do this directly if asked to, using the customer id from the order
 notification email.
 
-Why this shape instead of authorize-then-capture: no expiring
-authorization hold to race against, no risk of a stale hold falling off
-and having to ask the buyer to pay again. The tradeoff is that sending the
-invoice is a manual step every time — there's no code tying "mark this
-shipped" to "send the invoice," so it only happens if someone remembers to
-do it once the package is actually out the door.
+Why a saved card instead of authorize-then-capture (an earlier approach
+in this codebase's history): a `capture_method: 'manual'` PaymentIntent
+authorization expires if not captured within roughly a week, which risked
+having to ask the buyer to pay again if an order sat unshipped too long.
+A saved payment method on a Customer doesn't expire on that kind of
+timer — it charges automatically whenever the invoice is finalized,
+whether that's tomorrow or next month. The tradeoff is the same as before:
+finalizing that invoice is still a manual step, so a forgotten order stays
+un-invoiced (and uncharged) indefinitely.
 
 **To make it actually work, someone needs to:**
 
 1. Create a [Stripe](https://dashboard.stripe.com) account. Everything
-   below can be done in test mode first with a `sk_test_...` key — test
-   mode has its own separate Products, Invoices and its own separate key,
-   completely isolated from live mode, so nothing you list or invoice
-   while testing shows up once you switch to the real key.
+   below can be done in test mode first with a `sk_test_.../pk_test_...`
+   key pair — test mode has its own separate Products, Customers and
+   Invoices, completely isolated from live mode, so nothing you list or
+   charge while testing shows up once you switch to the real keys.
 2. Add each item for sale as a Product (Dashboard → Product catalog →
    Add product): name, photo(s), description, and a one-time Price. Every
    item here is one-of-a-kind, so there's no "quantity" concept to set —
    one Product, one Price, reserved once, then archived.
-3. Get the secret API key from Dashboard → Developers → API keys and set
-   `STRIPE_SECRET_KEY` in Vercel's Environment Variables.
+3. Get both keys from Dashboard → Developers → API keys and set
+   `STRIPE_SECRET_KEY` (starts `sk_`) and `STRIPE_PUBLISHABLE_KEY` (starts
+   `pk_`) in Vercel's Environment Variables. The publishable key isn't a
+   secret — `api/config.js` hands it to the browser on request — but it
+   still comes from an env var rather than being hardcoded, so switching
+   test/live mode is a Vercel setting, not a code change.
 4. Redeploy.
 
-There's no webhook to configure for the reserve step — `api/order.js`
-doesn't need Stripe to call it back, it's a one-way "archive the product
-and send two emails" action. (A webhook could eventually notify `support@`
-when an invoice gets paid, via the `invoice.paid` event — not built, since
-nothing needs it yet.)
+There's no webhook to configure — none of this needs Stripe to call back
+into the site. (A webhook could eventually notify `support@` when an
+automatic charge fails, via the `invoice.payment_failed` event — not
+built, since nothing needs it yet; for now, a failed automatic charge just
+shows up as such in the Dashboard, where it can be retried or turned into
+an emailed invoice as a fallback.)
 
-Until `STRIPE_SECRET_KEY` is set, both `api/products.js` and `api/order.js`
-fail closed with a clear "shop is misconfigured" message rather than
-silently breaking. Test the whole loop in Stripe's test mode (list a test
-product, reserve it through the site, confirm the product auto-archives
-and both emails arrive, then create and send a test-mode invoice from the
-Dashboard and pay it with [a Stripe test
-card](https://docs.stripe.com/testing#cards)) before switching to a live
-key and listing anything real.
+Until both Stripe keys are set, `api/products.js`, `api/setup-intent.js`
+and `api/order.js` all fail closed with a clear "shop is misconfigured"
+message rather than silently breaking. Test the whole loop in Stripe's
+test mode (list a test product, reserve it through the site with [a
+Stripe test card](https://docs.stripe.com/testing#cards), confirm the
+product auto-archives and both emails arrive, then create a test-mode
+invoice set to charge automatically and confirm it actually charges the
+saved card) before switching to live keys and listing anything real.
 
 **Known gaps, by design, not oversight:**
 
@@ -163,18 +196,23 @@ key and listing anything real.
   form on the same one-of-a-kind item within the same few seconds could
   both get through; `api/order.js` archives the product the instant the
   first request lands, which closes that window to milliseconds, but it
-  isn't a hard lock. If it ever actually happens, just don't invoice (or
-  don't send) the second order — nothing was ever charged, so there's
-  nothing to refund or cancel.
-- **Invoicing is entirely manual.** Nothing in this codebase creates or
-  sends a Stripe Invoice automatically. That's deliberate for now — see
-  above — but means a forgotten order stays un-invoiced indefinitely with
-  no reminder beyond the original "pack this up" email.
+  isn't a hard lock. If it ever actually happens, just don't invoice the
+  second order — nothing was ever charged, so there's nothing to refund.
+- **Charging is entirely manual.** Nothing in this codebase finalizes a
+  Stripe Invoice automatically. That's deliberate for now — see above —
+  but means a forgotten order stays un-invoiced (and uncharged)
+  indefinitely with no reminder beyond the original "pack this up" email.
+- **An automatic charge can still fail.** Some cards require additional
+  authentication (3D Secure) for a charge made without the cardholder
+  present, which an off-session automatic charge can't complete on its
+  own. Rare for ordinary US domestic cards, but real — if it happens,
+  Stripe surfaces it in the Dashboard, and the fallback is to send that
+  buyer a regular payable invoice instead.
 - **Prices are all-inclusive by policy, not by calculation.** The site
-  states, and `api/order.js`'s internal notification email reminds whoever
-  invoices, that standard shipping (priority, via FedEx/UPS/another
-  reputable carrier), tax, fees and insurance are already folded into the
-  listed price — the invoice should match that number, with one
+  states, and `api/order.js`'s internal notification email reminds
+  whoever invoices, that standard shipping (priority, via FedEx/UPS/
+  another reputable carrier), tax, fees and insurance are already folded
+  into the listed price — the invoice should match that number, with one
   exception: if a buyer separately asks for faster, expedited shipping,
   that cost gets added on top. Nothing in code enforces any of this,
   including the expedited case — there's no form field for requesting it
@@ -353,9 +391,11 @@ dealers rather than direct from athletes; that every item arrives here before
 it is listed and is checked against whatever documentation came with it; that
 we never write our own certificates; that the listed price is all-inclusive —
 standard shipping, tax, fees and insurance already folded in, nothing added
-at invoice time except expedited shipping a buyer separately requested; and
-that every sale is final, no refunds or exchanges for any reason, including
-a piece that turns out not authentic or arrives damaged. Each of those is
+at invoice time except expedited shipping a buyer separately requested;
+that a card is saved securely at reservation but not charged until the
+order actually ships, at which point it's charged automatically; and that
+every sale is final, no refunds or exchanges for any reason, including a
+piece that turns out not authentic or arrives damaged. Each of those is
 load-bearing — if any stops being true, change the copy the same day.
 
 Everything else about the shop is written in the future tense on purpose. The
