@@ -19,9 +19,9 @@ index.html             homepage — hero, why, how, what's coming, family, signu
 shop.html              live product listing, pulled from Stripe — "reserve" opens an order form
 shop-success.html      where the site sends a buyer after reserving (no payment yet)
 about.html             origin story, vault, team, philosophy, figures
-faq.html               authentication, shipping, returns, payment
+faq.html               authentication, shipping, sales policy, payment
 privacy.html           what we collect, cookies, your rights
-refunds.html           the authenticity guarantee, returns, damaged parcels
+refunds.html           all sales final — no refunds, returns or exchanges
 terms.html             the rules for using the site and buying from us
 assets/css/styles.css  design tokens + every component style
 assets/js/main.js      mobile menu, email signups, FAQ accordions
@@ -230,23 +230,24 @@ explicitly rather than inheriting a host background.
   invented marks standing in for real third-party authenticators. Swap them for
   your actual partners' names and licensed logos.
 - **Unsettled policies read "Coming soon"** (`.tbd` pill) rather than carrying
-  an invented number — returns window, who pays return shipping and so on,
-  now spanning the FAQ and the three legal pages too (registered business
-  name and address, governing law, retention periods). Search the HTML for
-  `class="tbd"` to find every one. Replace them as each is decided; all of
-  them must be real before the first order.
-  **Three of these are now answered by the Shop & checkout section
-  above** — the FAQ's "How can I pay?" and "What does shipping cost?" no
-  longer read "Coming soon" now that ordering, invoicing and all-inclusive
-  pricing exist, and Terms' pricing section states currency (USD) outright
-  instead of leaving it blank.
+  an invented number — dispatch times, international shipping countries and
+  so on, spanning the FAQ and the two legal pages that still carry one
+  (registered business name and address, governing law, retention periods).
+  Search the HTML for `class="tbd"` to find every one. Replace them as each
+  is decided; all of them must be real before the first order.
+  **Several of these are now settled** — the FAQ's "How can I pay?" and
+  "What does shipping cost?" no longer read "Coming soon" now that
+  ordering, invoicing and all-inclusive pricing exist; Terms' pricing
+  section states currency (USD) outright; and Refunds no longer carries a
+  return window or return-shipping placeholder at all, since the policy is
+  now simply that all sales are final.
 - **Privacy, Refunds and Terms are a drafted starting point, not a legally
   reviewed set of documents.** Each carries a small note box at the top saying
   so. Before relying on them: confirm the registered business name and
   address, the governing law / jurisdiction, and have someone who does this
   professionally read all three. They're internally consistent with each
-  other and with the FAQ's existing claims (the authenticity guarantee, no
-  buyer's premium) — don't let a future edit to one contradict the others.
+  other and with the FAQ's existing claims (all sales final, all-inclusive
+  pricing) — don't let a future edit to one contradict the others.
 - **There are two live addresses, split by who's sending, not by topic:**
   `support@pandasportsmemorabilia.com` is the one shown to people — the
   footer's email icon on every page, the FAQ contact block, the homepage
@@ -352,9 +353,10 @@ dealers rather than direct from athletes; that every item arrives here before
 it is listed and is checked against whatever documentation came with it; that
 we never write our own certificates; that the listed price is all-inclusive —
 shipping, tax, fees and insurance already folded in, nothing added at
-invoice time; and that anything sold and later shown not to be genuine is
-refunded in full. Each of those is load-bearing — if any stops being true,
-change the copy the same day.
+invoice time; and that every sale is final, no refunds or exchanges for any
+reason, including a piece that turns out not authentic or arrives damaged.
+Each of those is load-bearing — if any stops being true, change the copy
+the same day.
 
 Everything else about the shop is written in the future tense on purpose. The
 site says what Panda intends to do, because Panda hasn't done it yet.
