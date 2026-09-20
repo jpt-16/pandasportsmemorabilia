@@ -200,7 +200,7 @@ export default async function handler(req, res) {
         replyTo: 'support@pandasportsmemorabilia.com',
         to: email,
         subject: `You've reserved it — ${productName}`,
-        text: `${productName} (${priceStr}) is reserved for you. Your ${cardStr} is saved securely with Stripe, but nothing has been charged yet.\n\nWe'll pack it up and, once it actually ships, your card will be charged automatically — no further action needed from you, and we'll email you when it happens.\n\nShipping to:\n${shippingLines.join('\n')}\n\nReply to this email any time if you have a question about it.\n\nThank you for supporting Panda. 10% of this sale goes to cancer research.`,
+        text: `${productName} (${priceStr}) is reserved for you. Your ${cardStr} is saved securely with Stripe, but nothing has been charged yet.\n\nWe'll pack it up and, once it actually ships, your card will be charged automatically — no further action needed from you, and we'll email you when it happens.\n\nShipping to:\n${shippingLines.join('\n')}\n\nReply to this email any time if you have a question about it.\n\nThank you for supporting Panda. 10% of this sale's proceeds go to a cancer charity or foundation of our choice.`,
       });
     } catch (err) {
       console.error('api/order: buyer confirmation email failed:', err);
