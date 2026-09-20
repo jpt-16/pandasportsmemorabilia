@@ -172,12 +172,16 @@ key and listing anything real.
   no reminder beyond the original "pack this up" email.
 - **Prices are all-inclusive by policy, not by calculation.** The site
   states, and `api/order.js`'s internal notification email reminds whoever
-  invoices, that shipping, tax, fees and insurance are already folded into
-  the listed price — the invoice should be for exactly that number,
-  nothing added on top. Nothing in code enforces this; it depends on
-  whoever prices an item in the Stripe Dashboard actually accounting for
-  expected shipping and insurance cost in the number they set, and on the
-  invoice matching it.
+  invoices, that standard shipping (priority, via FedEx/UPS/another
+  reputable carrier), tax, fees and insurance are already folded into the
+  listed price — the invoice should match that number, with one
+  exception: if a buyer separately asks for faster, expedited shipping,
+  that cost gets added on top. Nothing in code enforces any of this,
+  including the expedited case — there's no form field for requesting it
+  and no calculation of what it should cost, so it's handled entirely by
+  email and added to the invoice by hand. It depends on whoever prices an
+  item in the Stripe Dashboard accounting for expected standard-shipping
+  and insurance cost in the number they set.
 - **No accounts, guest ordering only.** Deliberate — see the "what's next"
   reasoning if this ever gets revisited: one-of-a-kind inventory doesn't
   benefit much from repeat-purchase account features, and forced sign-in
@@ -348,11 +352,11 @@ The site states, as fact: that stock is bought through auction houses and
 dealers rather than direct from athletes; that every item arrives here before
 it is listed and is checked against whatever documentation came with it; that
 we never write our own certificates; that the listed price is all-inclusive —
-shipping, tax, fees and insurance already folded in, nothing added at
-invoice time; and that every sale is final, no refunds or exchanges for any
-reason, including a piece that turns out not authentic or arrives damaged.
-Each of those is load-bearing — if any stops being true, change the copy
-the same day.
+standard shipping, tax, fees and insurance already folded in, nothing added
+at invoice time except expedited shipping a buyer separately requested; and
+that every sale is final, no refunds or exchanges for any reason, including
+a piece that turns out not authentic or arrives damaged. Each of those is
+load-bearing — if any stops being true, change the copy the same day.
 
 Everything else about the shop is written in the future tense on purpose. The
 site says what Panda intends to do, because Panda hasn't done it yet.
