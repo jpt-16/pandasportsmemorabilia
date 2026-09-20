@@ -27,6 +27,7 @@ assets/css/styles.css  design tokens + every component style
 assets/js/main.js      mobile menu, email signups, FAQ accordions
 assets/js/shop.js      shop.html only — fetches products, Stripe Card Element, order form
 assets/brand/           logo, mark, and favicon files
+assets/certificates/     certificate-of-authenticity images, one per item
 api/subscribe.js       serverless function: signup -> Resend audience
 api/products.js        serverless function: list active Stripe products
 api/config.js          serverless function: hands the Stripe publishable key to the browser
@@ -94,12 +95,26 @@ message instead of the normal success one.
 
 There's no separate database or admin panel for inventory — **Stripe's own
 Product catalog is the inventory system.** Add a Product in the Stripe
-Dashboard (name, description, one or more images, a one-time Price) and
-it appears on `shop.html`; archive it there once it sells and it
-disappears from the site. `api/products.js` lists active products, and
+Dashboard (name, description, a photo, a one-time Price) and it appears
+on `shop.html`; archive it there once it sells and it disappears from
+the site. `api/products.js` lists active products, and
 `api/setup-intent.js` + `api/order.js` together handle whatever someone
 submits after clicking "Reserve this item" — see "Reserve now, save the
 card, charge on ship" below for the whole flow.
+
+### Certificate images
+
+The Dashboard's "Add product" screen only accepts one photo per product.
+To show a second image on the shop card — a piece's certificate of
+authenticity — add the file to `assets/certificates/` in this repo (see
+that folder's own README for the exact steps), then set a **Metadata**
+entry on the Stripe Product: key `certificate`, value the filename.
+`api/products.js` reads that metadata key and appends
+`assets/certificates/<filename>` to the item's image list; `shop.html`'s
+gallery (a plain CSS scroll-snap strip, no library) renders every image
+as a swipeable set with dot indicators once there's more than one.
+Metadata itself isn't image-capped, so this works entirely within
+Stripe's existing product record — no separate content system.
 
 ### Reserve now, save the card, charge on ship
 

@@ -3,6 +3,15 @@
 // Josh or Jake adds an item as a Product in the Stripe Dashboard (photo,
 // price, description) and archives it once it sells; this endpoint just
 // lists whatever's currently active, cheapest first.
+//
+// The Dashboard's "Add product" screen only accepts one photo per
+// product, but a piece often has a second image worth showing — its
+// certificate of authenticity. Rather than fight that limit, a second
+// image can be added via the product's Metadata (plain text, not
+// image-capped): set a key called `certificate` to a filename that
+// exists in assets/certificates/ (ask Claude to add the file to the repo
+// first — see README, "Certificate images"). If that metadata key is
+// set, this endpoint appends it to the images array as a second photo.
 
 import Stripe from 'stripe';
 
@@ -29,15 +38,29 @@ export default async function handler(req, res) {
 
     const items = products.data
       .filter((p) => p.default_price && p.default_price.unit_amount != null)
-      .map((p) => ({
-        id: p.id,
-        priceId: p.default_price.id,
-        name: p.name,
-        description: p.description || '',
-        image: (p.images && p.images[0]) || null,
-        amount: p.default_price.unit_amount,
-        currency: p.default_price.currency,
-      }))
+      .map((p) => {
+        const images = Array.isArray(p.images) ? p.images.slice() : [];
+
+        // Metadata value becomes part of a URL path — strip anything that
+        // isn't a plain filename before trusting it, even though only
+        // Jake/Josh can set it via the Stripe Dashboard.
+        const certificateFile = p.metadata && typeof p.metadata.certificate === 'string'
+          ? p.metadata.certificate.replace(/[^a-zA-Z0-9._-]/g, '')
+          : '';
+        if (certificateFile) {
+          images.push(`assets/certificates/${certificateFile}`);
+        }
+
+        return {
+          id: p.id,
+          priceId: p.default_price.id,
+          name: p.name,
+          description: p.description || '',
+          images,
+          amount: p.default_price.unit_amount,
+          currency: p.default_price.currency,
+        };
+      })
       .sort((a, b) => a.amount - b.amount);
 
     res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=60');
