@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shop — Panda Sports Memorabilia</title>
-<meta name="description" content="What we're holding right now — one of each, checked before it went up. When it's gone, it's gone.">
+<title>Item — Panda Sports Memorabilia</title>
+<meta name="description" content="The full picture — every photo, the certificate, and how to reserve it.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Panda Sports Memorabilia">
-<meta property="og:title" content="Shop — Panda Sports Memorabilia">
-<meta property="og:description" content="What we're holding right now — one of each, checked before it went up. When it's gone, it's gone.">
+<meta property="og:title" content="Item — Panda Sports Memorabilia">
+<meta property="og:description" content="The full picture — every photo, the certificate, and how to reserve it.">
 <meta property="og:image" content="https://www.pandasportsmemorabilia.com/assets/brand/panda-logo-memorabilia-horizontal.png">
-<meta property="og:url" content="https://www.pandasportsmemorabilia.com/shop">
+<meta property="og:url" content="https://www.pandasportsmemorabilia.com/product">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Shop — Panda Sports Memorabilia">
-<meta name="twitter:description" content="What we're holding right now — one of each, checked before it went up. When it's gone, it's gone.">
+<meta name="twitter:title" content="Item — Panda Sports Memorabilia">
+<meta name="twitter:description" content="The full picture — every photo, the certificate, and how to reserve it.">
 <meta name="twitter:image" content="https://www.pandasportsmemorabilia.com/assets/brand/panda-logo-memorabilia-horizontal.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/brand/favicon-16.png">
@@ -84,7 +84,7 @@
     </a>
 
     <nav class="nav" id="nav" aria-label="Primary">
-      <a class="is-current" aria-current="page" href="shop.html">Shop</a>
+      <a href="shop.html">Shop</a>
       <a href="index.html#why">Why Panda</a>
       <a href="index.html#how">How it works</a>
       <a href="about.html">About</a>
@@ -107,20 +107,14 @@
   <section class="pagehead">
     <div class="wrap">
       <nav class="crumbs" aria-label="Breadcrumb">
-        <a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">Shop</span>
+        <a href="index.html">Home</a><span aria-hidden="true">/</span><a href="shop.html">Shop</a><span aria-hidden="true">/</span><span aria-current="page" id="product-crumb">Loading&hellip;</span>
       </nav>
-      <p class="eyebrow eyebrow--accent">The shop</p>
-      <h1 class="pagehead__title">What we're holding <em>right now</em></h1>
-      <p class="lede">One of each, checked before it went up. No mock-ups, no filler &mdash; when a piece is gone, it's off the shelf for good. Click through for the full picture on any item, including its documentation &mdash; and your card isn't charged until your order actually ships.</p>
     </div>
   </section>
 
-  <section class="section section--gallery" id="stock">
+  <section class="section section--gallery" id="product-root">
     <div class="wrap">
-      <div id="shop-root">
-        <p class="shop-state">Loading the shelf&hellip;</p>
-      </div>
-      <p class="shop-legal">Team names, logos and league marks shown here belong to their respective owners &mdash; we're an independent reseller, not affiliated with, sponsored by, or endorsed by any team, league or athlete. Condition is our own assessment unless a piece carries a third-party grading slab. See our <a href="terms.html">Terms</a> for details.</p>
+      <p class="shop-state">Loading&hellip;</p>
     </div>
   </section>
 
@@ -191,6 +185,7 @@
 </footer>
 <!-- CHROME:FOOT:END -->
 <script src="assets/js/main.js?v=2"></script>
-<script src="assets/js/shop.js?v=3"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="assets/js/product.js?v=1"></script>
 </body>
 </html>

@@ -19,7 +19,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "index.html"
-PAGES = ["about.html", "faq.html", "privacy.html", "refunds.html", "terms.html", "shop.html", "shop-success.html"]
+PAGES = ["about.html", "faq.html", "privacy.html", "refunds.html", "terms.html", "shop.html", "shop-success.html", "product.html"]
 NAV_FOR_PAGE = {
     "about.html": "About",
     "faq.html": "FAQ",
@@ -31,6 +31,7 @@ NAV_FOR_PAGE = {
     "refunds.html": "Refunds",
     "terms.html": "Terms",
     "shop-success.html": "Order reserved",
+    "product.html": "Item",
 }
 
 
