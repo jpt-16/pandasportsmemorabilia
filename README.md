@@ -32,6 +32,7 @@ api/products.js        serverless function: list active Stripe products
 api/config.js          serverless function: hands the Stripe publishable key to the browser
 api/setup-intent.js    serverless function: create a Stripe Customer + SetupIntent (save a card)
 api/order.js           serverless function: reserve an item -> archive + email (no charge)
+api/webhook.js         serverless function: invoice.paid -> "you've been charged" email
 package.json           declares the two dependencies (resend, stripe) + Node version
 .env.example           the environment variables the api/ functions need
 tools/sync-chrome.py   keeps the header/footer identical across pages
@@ -172,23 +173,27 @@ un-invoiced (and uncharged) indefinitely.
    secret — `api/config.js` hands it to the browser on request — but it
    still comes from an env var rather than being hardcoded, so switching
    test/live mode is a Vercel setting, not a code change.
-4. Redeploy.
+4. Add a webhook endpoint (Dashboard → Developers → Webhooks → Add
+   endpoint) pointed at `https://<your-domain>/api/webhook`, listening for
+   the `invoice.paid` event — that's what fires the moment an
+   automatically-collected invoice actually charges a buyer's saved card,
+   and it's the only thing that triggers the "you've been charged, it's
+   on its way" email. Copy the endpoint's signing secret into
+   `STRIPE_WEBHOOK_SECRET`. Nothing else in this flow needs Stripe to call
+   back into the site — reserving doesn't, and finalizing an invoice is a
+   manual Dashboard action, not something the site triggers.
+5. Redeploy.
 
-There's no webhook to configure — none of this needs Stripe to call back
-into the site. (A webhook could eventually notify `support@` when an
-automatic charge fails, via the `invoice.payment_failed` event — not
-built, since nothing needs it yet; for now, a failed automatic charge just
-shows up as such in the Dashboard, where it can be retried or turned into
-an emailed invoice as a fallback.)
-
-Until both Stripe keys are set, `api/products.js`, `api/setup-intent.js`
+Until the Stripe keys are set, `api/products.js`, `api/setup-intent.js`
 and `api/order.js` all fail closed with a clear "shop is misconfigured"
-message rather than silently breaking. Test the whole loop in Stripe's
-test mode (list a test product, reserve it through the site with [a
-Stripe test card](https://docs.stripe.com/testing#cards), confirm the
-product auto-archives and both emails arrive, then create a test-mode
-invoice set to charge automatically and confirm it actually charges the
-saved card) before switching to live keys and listing anything real.
+message rather than silently breaking; `api/webhook.js` does the same if
+`STRIPE_WEBHOOK_SECRET` is missing. Test the whole loop in Stripe's test
+mode (list a test product, reserve it through the site with [a Stripe
+test card](https://docs.stripe.com/testing#cards), confirm the product
+auto-archives and both emails arrive, then create a test-mode invoice set
+to charge automatically and confirm it actually charges the saved card
+*and* that the buyer gets the "you've been charged" email) before
+switching to live keys and listing anything real.
 
 **Known gaps, by design, not oversight:**
 
@@ -206,8 +211,15 @@ saved card) before switching to live keys and listing anything real.
   authentication (3D Secure) for a charge made without the cardholder
   present, which an off-session automatic charge can't complete on its
   own. Rare for ordinary US domestic cards, but real — if it happens,
-  Stripe surfaces it in the Dashboard, and the fallback is to send that
-  buyer a regular payable invoice instead.
+  Stripe surfaces it in the Dashboard (and, since there's no
+  `invoice.payment_failed` webhook, that's the only place it shows up —
+  `api/webhook.js` only listens for `invoice.paid`); the fallback is to
+  send that buyer a regular payable invoice instead.
+- **The "you've been charged" email can in principle arrive twice.**
+  Stripe can redeliver the same webhook event more than once; `api/webhook.js`
+  doesn't deduplicate, so a retried `invoice.paid` delivery would send a
+  second copy. Same tradeoff already accepted elsewhere in this codebase —
+  fine at this volume, not worth the extra machinery yet.
 - **Prices are all-inclusive by policy, not by calculation.** The site
   states, and `api/order.js`'s internal notification email reminds
   whoever invoices, that standard shipping (priority, via FedEx/UPS/
