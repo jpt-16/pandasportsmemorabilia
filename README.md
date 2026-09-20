@@ -1,11 +1,11 @@
 # Panda Sports Memorabilia
 
-A site for Panda Sports Memorabilia, still pre-launch in the sense that it's
-waiting on real, photographed inventory — but the plumbing to actually sell
-something is now real, not a placeholder. The homepage explains the
-proposition and collects email addresses (see "Email signups" below); the
-Shop page lists and sells whatever's currently in stock via Stripe (see
-"Shop & checkout" below). The pages themselves are still plain static HTML
+A site for Panda Sports Memorabilia. It's live — the shop actually sells
+whatever's currently in stock via Stripe (see "Shop & checkout" below),
+one item at a time as inventory comes in. The homepage explains the
+proposition, links straight into the shop, and also collects email
+addresses for new-arrival alerts (see "Email signups" below). The pages
+themselves are still plain static HTML
 with no build step — open `index.html` directly, or serve the folder with
 any static host, and everything renders. What needs Vercel specifically is
 the serverless *backend*: `npm install` (Vercel runs this automatically on
