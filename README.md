@@ -365,11 +365,11 @@ explicitly rather than inheriting a host background.
 - **The brand renamed from "Panda Sports Collectibles" to "Panda Sports
   Memorabilia"** after launch prep began — every occurrence of the old
   name, the old lockup text, and the old email domain has been swept and
-  replaced. The one place that did *not* get renamed is the GitHub repo
-  itself, which is called `pandasportscollectables` (note:
-  "collect**a**bles", a third, unrelated spelling) — that's a
-  repo-hosting detail, not brand copy, and renaming it is a GitHub
-  Settings action outside this codebase; do it there if it bothers you.
+  replaced, including deleting `assets/brand/panda-logo.png`, the one
+  deployed asset that still had the old wordmark baked into it (unused by
+  any page, but publicly reachable at its own URL — and the likely source
+  of a Google result surfacing the old name). The GitHub repo has since
+  been renamed too, to `jpt-16/pandasportsmemorabilia`.
 - **The family is Josh, Jake, Nolan and Liam Twohig** — it is family-run, and
   the site says that and no more. Do not reintroduce the family structure,
   the fact that it runs alongside other jobs, or anything else that frames
@@ -413,17 +413,11 @@ panda icon) plus the original wordmark handoff.
   — the same lockups on black; the badge (circular) variant is a good fit
   for a social profile picture, but nothing in this repo wires it in
   automatically — upload it wherever that's set separately.
-- `panda-logo.png` — **do not use this one.** It still reads "PANDA SPORTS
-  COLLECTIBLES," the pre-rename wordmark, baked into the image. Kept in the
-  repo only because it was part of the same upload; replace or delete it
-  once a corrected version exists.
-
-The wordmark is set live in **Anton**, at the proportions from
-`panda-wordmark.svg`: PANDA 150 / SPORTS 54 / (third line) 54, letter-spacing
--3 / +10 / +8 at that scale. That source file still literally says
-"COLLECTIBLES" — it's a reference asset from the original brand handoff, kept
-for its type-scale measurements, not shipped or rendered anywhere in the
-repo. The third line now reads "MEMORABILIA" (11 letters instead of 12);
+The wordmark is set live in **Anton**, at the proportions originally lifted
+from the brand handoff's wordmark reference (not itself in this repo):
+PANDA 150 / SPORTS 54 / (third line) 54, letter-spacing -3 / +10 / +8 at
+that scale. The third line now reads "MEMORABILIA" (11 letters instead of
+the original 12-letter word);
 the same letter-spacing carries over fine, but it was tuned by eye for the
 old word, so nudge it if it ever looks loose or tight against the panda
 mark. Anton is headline and wordmark only, per the handoff — never body
