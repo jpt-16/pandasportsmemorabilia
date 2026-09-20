@@ -229,23 +229,19 @@ explicitly rather than inheriting a host background.
 - **Authentication partners** (Veritas, Meridian, Hallmark, Holograph) are
   invented marks standing in for real third-party authenticators. Swap them for
   your actual partners' names and licensed logos.
-- **Unsettled policies read "Coming soon"** (`.tbd` pill) rather than carrying
-  an invented number — dispatch times, international shipping countries and
-  so on, spanning the FAQ and the two legal pages that still carry one
-  (registered business name and address, governing law, retention periods).
-  Search the HTML for `class="tbd"` to find every one. Replace them as each
-  is decided; all of them must be real before the first order.
-  **Several of these are now settled** — the FAQ's "How can I pay?" and
-  "What does shipping cost?" no longer read "Coming soon" now that
-  ordering, invoicing and all-inclusive pricing exist; Terms' pricing
-  section states currency (USD) outright; and Refunds no longer carries a
-  return window or return-shipping placeholder at all, since the policy is
-  now simply that all sales are final.
+- **One unsettled item left, marked "Coming soon"** (`.tbd` pill): the
+  business's registered street address, on Terms and Privacy. Everything
+  else that used to carry this pill is now answered — dispatch time
+  (about a week, not locked in), international shipping (US-only for now,
+  email support@ if you're elsewhere), payment plans (no), record
+  retention (3 years), governing law (US federal + Massachusetts), and
+  business structure (sole proprietorship, no LLC). Search the HTML for
+  `class="tbd"` to find the one that's left.
 - **Privacy, Refunds and Terms are a drafted starting point, not a legally
   reviewed set of documents.** Each carries a small note box at the top saying
-  so. Before relying on them: confirm the registered business name and
-  address, the governing law / jurisdiction, and have someone who does this
-  professionally read all three. They're internally consistent with each
+  so. Before relying on them: confirm the registered business address, and
+  have someone who does this professionally read all three. They're
+  internally consistent with each
   other and with the FAQ's existing claims (all sales final, all-inclusive
   pricing) — don't let a future edit to one contradict the others.
 - **There are two live addresses, split by who's sending, not by topic:**
