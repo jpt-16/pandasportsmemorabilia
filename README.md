@@ -170,9 +170,14 @@ key and listing anything real.
   sends a Stripe Invoice automatically. That's deliberate for now — see
   above — but means a forgotten order stays un-invoiced indefinitely with
   no reminder beyond the original "pack this up" email.
-- **Shipping and tax aren't calculated anywhere in code.** Since invoices
-  are created by hand, whoever's creating one adds a shipping line item
-  and any tax manually rather than the site computing it automatically.
+- **Prices are all-inclusive by policy, not by calculation.** The site
+  states, and `api/order.js`'s internal notification email reminds whoever
+  invoices, that shipping, tax, fees and insurance are already folded into
+  the listed price — the invoice should be for exactly that number,
+  nothing added on top. Nothing in code enforces this; it depends on
+  whoever prices an item in the Stripe Dashboard actually accounting for
+  expected shipping and insurance cost in the number they set, and on the
+  invoice matching it.
 - **No accounts, guest ordering only.** Deliberate — see the "what's next"
   reasoning if this ever gets revisited: one-of-a-kind inventory doesn't
   benefit much from repeat-purchase account features, and forced sign-in
@@ -225,17 +230,16 @@ explicitly rather than inheriting a host background.
   invented marks standing in for real third-party authenticators. Swap them for
   your actual partners' names and licensed logos.
 - **Unsettled policies read "Coming soon"** (`.tbd` pill) rather than carrying
-  an invented number — shipping rates, returns window, payment methods and so
-  on, now spanning the FAQ and the three legal pages too (registered business
-  name and address, governing law, currency, retention periods). Search the
-  HTML for `class="tbd"` to find every one. Replace them as each is decided;
-  all of them must be real before the first order.
-  **One of these is now answered by the Shop & checkout section above** —
-  the FAQ's "How can I pay?" no longer reads "Coming soon" now that
-  ordering and invoicing exist. "What does shipping cost?" still does,
-  since shipping isn't calculated anywhere in code — it's whatever's added
-  as a line item on the invoice, by hand, per order. Decide a real
-  approach to shipping cost before answering that one for real.
+  an invented number — returns window, who pays return shipping and so on,
+  now spanning the FAQ and the three legal pages too (registered business
+  name and address, governing law, retention periods). Search the HTML for
+  `class="tbd"` to find every one. Replace them as each is decided; all of
+  them must be real before the first order.
+  **Three of these are now answered by the Shop & checkout section
+  above** — the FAQ's "How can I pay?" and "What does shipping cost?" no
+  longer read "Coming soon" now that ordering, invoicing and all-inclusive
+  pricing exist, and Terms' pricing section states currency (USD) outright
+  instead of leaving it blank.
 - **Privacy, Refunds and Terms are a drafted starting point, not a legally
   reviewed set of documents.** Each carries a small note box at the top saying
   so. Before relying on them: confirm the registered business name and
@@ -346,8 +350,9 @@ and script links is what flushed it.
 The site states, as fact: that stock is bought through auction houses and
 dealers rather than direct from athletes; that every item arrives here before
 it is listed and is checked against whatever documentation came with it; that
-we never write our own certificates; that no buyer's premium or auction fee is
-added at checkout; and that anything sold and later shown not to be genuine is
+we never write our own certificates; that the listed price is all-inclusive —
+shipping, tax, fees and insurance already folded in, nothing added at
+invoice time; and that anything sold and later shown not to be genuine is
 refunded in full. Each of those is load-bearing — if any stops being true,
 change the copy the same day.
 

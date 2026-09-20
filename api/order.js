@@ -130,7 +130,7 @@ export default async function handler(req, res) {
         from: fromAddress,
         to: notifyTo,
         subject: `New order to pack: ${productName}`,
-        text: `${name} <${email}> just reserved ${productName} (${priceStr}) — no payment collected yet.\n\nShip to: ${shippingAddress}\n\nWhen it's packed and shipped: create a Stripe invoice for ${priceStr} to ${email} (Stripe Dashboard → Invoices → Create invoice, or ask Claude to do it via the Stripe connector) and send it. That's the moment they're actually charged.`,
+        text: `${name} <${email}> just reserved ${productName} (${priceStr}) — no payment collected yet.\n\nShip to: ${shippingAddress}\n\nWhen it's packed and shipped: create a Stripe invoice for exactly ${priceStr} — the listed price is all-inclusive (shipping, tax, fees, insurance), so don't add anything on top — to ${email} (Stripe Dashboard → Invoices → Create invoice, or ask Claude to do it via the Stripe connector) and send it. That's the moment they're actually charged.`,
       });
     } catch (err) {
       console.error('api/order: internal order notification failed:', err);
