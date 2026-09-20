@@ -16,7 +16,8 @@ work when the API routes are actually running — on Vercel, or via
 
 ```
 index.html             homepage — hero, why, how, what's coming, family, signup
-shop.html              live product listing, pulled from Stripe — "reserve" opens an order form
+shop.html              live product listing, pulled from Stripe — browse only, click through for one
+product.html           one item in full — every photo, description, "Reserve this item"
 shop-success.html      where the site sends a buyer after reserving (card saved, not charged)
 about.html             origin story, vault, team, philosophy, figures
 faq.html               authentication, shipping, sales policy, payment
@@ -25,7 +26,8 @@ refunds.html           all sales final — no refunds, returns or exchanges
 terms.html             the rules for using the site and buying from us
 assets/css/styles.css  design tokens + every component style
 assets/js/main.js      mobile menu, email signups, FAQ accordions
-assets/js/shop.js      shop.html only — fetches products, Stripe Card Element, order form
+assets/js/shop.js      shop.html only — fetches products, renders the browsable grid
+assets/js/product.js   product.html only — finds the item by ?id=, gallery + reserve flow
 assets/brand/           logo, mark, and favicon files
 assets/certificates/     certificate-of-authenticity images, one per item
 api/subscribe.js       serverless function: signup -> Resend audience
@@ -97,33 +99,45 @@ There's no separate database or admin panel for inventory — **Stripe's own
 Product catalog is the inventory system.** Add a Product in the Stripe
 Dashboard (name, description, a photo, a one-time Price) and it appears
 on `shop.html`; archive it there once it sells and it disappears from
-the site. `api/products.js` lists active products, and
-`api/setup-intent.js` + `api/order.js` together handle whatever someone
-submits after clicking "Reserve this item" — see "Reserve now, save the
-card, charge on ship" below for the whole flow.
+the site. `api/products.js` lists active products for both pages.
+
+`shop.html` is browse-only — a grid of cards (photo, name, price) that
+each link to `product.html?id=<product id>`, where the actual item lives:
+every photo, the full description, and "Reserve this item". Splitting it
+this way (rather than cramming the reserve form into every grid card, an
+earlier version of this site) means a buyer sees a proper single-item
+page — closer to how a normal e-commerce product page reads — before
+committing to anything, and the reserve flow only has to exist in one
+place. `api/setup-intent.js` + `api/order.js` handle whatever gets
+submitted from there — see "Reserve now, save the card, charge on ship"
+below for the whole flow.
 
 ### Certificate images
 
 The Dashboard's "Add product" screen only accepts one photo per product.
-To show a second image on the shop card — a piece's certificate of
-authenticity — add the file to `assets/certificates/` in this repo (see
-that folder's own README for the exact steps), then set a **Metadata**
-entry on the Stripe Product: key `certificate`, value the filename.
-`api/products.js` reads that metadata key and appends
-`assets/certificates/<filename>` to the item's image list; `shop.html`'s
-gallery (a plain CSS scroll-snap strip, no library) renders every image
-as a swipeable set with dot indicators once there's more than one.
-Metadata itself isn't image-capped, so this works entirely within
-Stripe's existing product record — no separate content system.
+To show a second image — a piece's certificate of authenticity — add the
+file to `assets/certificates/` in this repo (see that folder's own
+README for the exact steps), then set a **Metadata** entry on the Stripe
+Product: key `certificate`, value the filename. `api/products.js` reads
+that metadata key and appends `assets/certificates/<filename>` to the
+item's image list. Both `shop.html` (a small thumbnail gallery, cropped
+to fit the grid card) and `product.html` (the full, uncropped photos —
+this is where a buyer should be able to actually see every detail,
+including the certificate) render every image in the list as a
+swipeable set (plain CSS scroll-snap, no library) with dot indicators
+once there's more than one. Metadata itself isn't image-capped, so this
+works entirely within Stripe's existing product record — no separate
+content system.
 
 ### Reserve now, save the card, charge on ship
 
-Clicking "Reserve this item" opens an inline form for name, shipping
-address, and a card — the card field itself is Stripe's own, embedded on
-the page via Stripe.js (loaded in `shop.html`, wired up in
-`assets/js/shop.js`), so the raw card number never reaches our server,
-only Stripe's. That's what keeps this out of PCI-compliance territory
-beyond the simplest tier: we're never the one handling card data.
+On `product.html`, clicking "Reserve this item" opens an inline form for
+name, shipping address, and a card — the card field itself is Stripe's
+own, embedded on the page via Stripe.js (loaded in `product.html`, wired
+up in `assets/js/product.js`), so the raw card number never reaches our
+server, only Stripe's. That's what keeps this out of PCI-compliance
+territory beyond the simplest tier: we're never the one handling card
+data.
 
 What actually happens on submit, in order:
 
