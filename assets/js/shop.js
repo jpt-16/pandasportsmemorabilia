@@ -37,13 +37,28 @@
     }
   }
 
+  function buildGalleryHtml(images) {
+    if (!images || !images.length) {
+      return '<div class="shop-card__img"></div>';
+    }
+    var imgs = images.map(function () {
+      return '<img alt="" loading="lazy">';
+    }).join('');
+    var dots = images.length > 1
+      ? '<div class="shop-card__dots">' +
+        images.map(function (_, i) {
+          return '<span' + (i === 0 ? ' class="is-active"' : '') + '></span>';
+        }).join('') +
+        '</div>'
+      : '';
+    return '<div class="shop-card__img"><div class="shop-card__gallery">' + imgs + '</div>' + dots + '</div>';
+  }
+
   function buildCard(item, stripe) {
     var li = document.createElement('li');
     li.className = 'shop-card';
     li.innerHTML =
-      '<div class="shop-card__img">' +
-      (item.image ? '<img alt="" loading="lazy">' : '') +
-      '</div>' +
+      buildGalleryHtml(item.images) +
       '<div class="shop-card__body">' +
       '<h3 class="shop-card__name"></h3>' +
       '<p class="shop-card__desc"></p>' +
@@ -79,11 +94,26 @@
       '</form>' +
       '</div>';
 
-    var img = li.querySelector('img');
-    if (img) img.src = item.image;
+    var galleryImgs = li.querySelectorAll('.shop-card__gallery img');
+    (item.images || []).forEach(function (src, i) {
+      if (galleryImgs[i]) galleryImgs[i].src = src;
+    });
     li.querySelector('.shop-card__name').textContent = item.name;
     li.querySelector('.shop-card__desc').textContent = item.description || '';
     li.querySelector('.shop-card__price').textContent = money(item.amount, item.currency);
+
+    // Swipe/scroll the gallery, and keep the dot indicator in sync — no
+    // library, just scroll position vs. container width.
+    var gallery = li.querySelector('.shop-card__gallery');
+    var dots = li.querySelectorAll('.shop-card__dots span');
+    if (gallery && dots.length) {
+      gallery.addEventListener('scroll', function () {
+        var index = Math.round(gallery.scrollLeft / gallery.clientWidth);
+        dots.forEach(function (dot, i) {
+          dot.classList.toggle('is-active', i === index);
+        });
+      });
+    }
 
     var buyBtn = li.querySelector('.shop-card__buy');
     var form = li.querySelector('.order-form');
