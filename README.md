@@ -28,6 +28,7 @@ assets/css/styles.css  design tokens + every component style
 assets/js/main.js      mobile menu, email signups, FAQ accordions
 assets/js/shop.js      shop.html only — fetches products, renders the browsable grid
 assets/js/product.js   product.html only — finds the item by ?id=, gallery + reserve flow
+assets/js/spotlight.js index.html only — features one item on the homepage, if it's still listed
 assets/brand/           logo, mark, and favicon files
 assets/certificates/     certificate-of-authenticity images, one per item
 api/subscribe.js       serverless function: signup -> Resend audience
@@ -128,6 +129,16 @@ swipeable set (plain CSS scroll-snap, no library) with dot indicators
 once there's more than one. Metadata itself isn't image-capped, so this
 works entirely within Stripe's existing product record — no separate
 content system.
+
+### Homepage spotlight
+
+`index.html` features one specific item — its Stripe product id is
+hardcoded as `FEATURED_ID` at the top of `assets/js/spotlight.js`. On
+load it fetches `/api/products` and only shows the section if that id is
+still in the active list, so a sold/archived item never gets advertised
+on the homepage; swap `FEATURED_ID` to feature something else, or clear
+it and hide the section by deleting the `spotlight.js` script tag if
+nothing should be featured for a while.
 
 ### Reserve now, save the card, charge on ship
 
