@@ -68,6 +68,39 @@
     document.title = item.name + ' — Panda Sports Memorabilia';
     if (crumb) crumb.textContent = item.name;
 
+    var buyAreaHtml = item.priceTbd
+      ? '<p class="product__tbd">Price not final yet &mdash; check back soon, or ' +
+        '<a href="index.html#notify">leave your email</a> to hear when it\'s set.</p>'
+      : '<button class="btn btn--primary product__buy" type="button">Reserve this item</button>' +
+        '<form class="order-form" hidden>' +
+        '  <label class="sr">Full name</label>' +
+        '  <input class="order-form__name" type="text" autocomplete="name" placeholder="Full name" required>' +
+        '  <label class="sr">Email address</label>' +
+        '  <input class="order-form__email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>' +
+        '  <label class="sr">Address line 1</label>' +
+        '  <input class="order-form__address1" type="text" autocomplete="address-line1" placeholder="Street address" required>' +
+        '  <label class="sr">Address line 2</label>' +
+        '  <input class="order-form__address2" type="text" autocomplete="address-line2" placeholder="Apt / unit (optional)">' +
+        '  <label class="sr">City</label>' +
+        '  <input class="order-form__city" type="text" autocomplete="address-level2" placeholder="City" required>' +
+        '  <label class="sr">State</label>' +
+        '  <input class="order-form__state" type="text" autocomplete="address-level1" placeholder="State" required>' +
+        '  <label class="sr">ZIP code</label>' +
+        '  <input class="order-form__zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="ZIP" required>' +
+        '  <label class="sr">Card details</label>' +
+        '  <div class="order-form__card"></div>' +
+        '  <p class="order-form__fine">US shipping only for now. Your card is saved securely with Stripe and charged automatically once your order ships &mdash; nothing is charged today.</p>' +
+        '  <div class="hp" aria-hidden="true">' +
+        '    <label>Leave this field blank</label>' +
+        '    <input class="order-form__hp" type="text" tabindex="-1" autocomplete="off">' +
+        '  </div>' +
+        '  <div class="order-form__actions">' +
+        '    <button class="btn btn--primary" type="submit">Confirm reservation</button>' +
+        '    <button class="btn btn--ghost order-form__cancel" type="button">Cancel</button>' +
+        '  </div>' +
+        '  <p class="signup__msg order-form__msg" role="status"></p>' +
+        '</form>';
+
     root.innerHTML =
       '<div class="wrap">' +
       '<p class="product__back"><a href="shop.html">&larr; Back to the shop</a></p>' +
@@ -77,35 +110,7 @@
       '<h1 class="product__name"></h1>' +
       '<p class="product__price"></p>' +
       '<p class="product__desc"></p>' +
-      '<button class="btn btn--primary product__buy" type="button">Reserve this item</button>' +
-      '<form class="order-form" hidden>' +
-      '  <label class="sr">Full name</label>' +
-      '  <input class="order-form__name" type="text" autocomplete="name" placeholder="Full name" required>' +
-      '  <label class="sr">Email address</label>' +
-      '  <input class="order-form__email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>' +
-      '  <label class="sr">Address line 1</label>' +
-      '  <input class="order-form__address1" type="text" autocomplete="address-line1" placeholder="Street address" required>' +
-      '  <label class="sr">Address line 2</label>' +
-      '  <input class="order-form__address2" type="text" autocomplete="address-line2" placeholder="Apt / unit (optional)">' +
-      '  <label class="sr">City</label>' +
-      '  <input class="order-form__city" type="text" autocomplete="address-level2" placeholder="City" required>' +
-      '  <label class="sr">State</label>' +
-      '  <input class="order-form__state" type="text" autocomplete="address-level1" placeholder="State" required>' +
-      '  <label class="sr">ZIP code</label>' +
-      '  <input class="order-form__zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="ZIP" required>' +
-      '  <label class="sr">Card details</label>' +
-      '  <div class="order-form__card"></div>' +
-      '  <p class="order-form__fine">US shipping only for now. Your card is saved securely with Stripe and charged automatically once your order ships &mdash; nothing is charged today.</p>' +
-      '  <div class="hp" aria-hidden="true">' +
-      '    <label>Leave this field blank</label>' +
-      '    <input class="order-form__hp" type="text" tabindex="-1" autocomplete="off">' +
-      '  </div>' +
-      '  <div class="order-form__actions">' +
-      '    <button class="btn btn--primary" type="submit">Confirm reservation</button>' +
-      '    <button class="btn btn--ghost order-form__cancel" type="button">Cancel</button>' +
-      '  </div>' +
-      '  <p class="signup__msg order-form__msg" role="status"></p>' +
-      '</form>' +
+      buyAreaHtml +
       '</div>' +
       '</div>' +
       '<p class="shop-legal">Team names, logos and league marks shown here belong to their respective owners &mdash; we’re an independent reseller, not affiliated with, sponsored by, or endorsed by any team, league or athlete. Condition is our own assessment unless a piece carries a third-party grading slab. See our <a href="terms.html">Terms</a> for details.</p>' +
@@ -117,7 +122,11 @@
     });
     root.querySelector('.product__name').textContent = item.name;
     root.querySelector('.product__desc').textContent = item.description || '';
-    root.querySelector('.product__price').textContent = money(item.amount, item.currency);
+    if (item.priceTbd) {
+      root.querySelector('.product__price').innerHTML = '<span class="tbd">Price &mdash; not final yet</span>';
+    } else {
+      root.querySelector('.product__price').textContent = money(item.amount, item.currency);
+    }
 
     var gallery = root.querySelector('.product__gallery');
     var dots = root.querySelectorAll('.product__dots span');
@@ -129,6 +138,8 @@
         });
       });
     }
+
+    if (item.priceTbd) return;
 
     var buyBtn = root.querySelector('.product__buy');
     var form = root.querySelector('.order-form');

@@ -687,6 +687,8 @@ textarea)[aria-invalid="true"]{border-color:var(--warn);box-shadow:0 0 0 3px rgb
 .product__price{font:700 1.6rem/1 var(--display);color:var(--fg)}
 .product__desc{font-size:.98rem;line-height:1.65;color:var(--fg-dim);white-space:pre-line}
 .product__buy{justify-self:start;margin-top:.3rem}
+.product__tbd{font-size:.92rem;line-height:1.6;color:var(--fg-dim)}
+.product__tbd a{color:var(--link);text-decoration:underline;text-underline-offset:2px}
 .product__back{font:600 .78rem/1 var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--link);display:inline-flex;align-items:center;gap:.35rem}
 @media (max-width:800px){.product{grid-template-columns:1fr;gap:1.6rem}}
 

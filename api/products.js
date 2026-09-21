@@ -12,6 +12,13 @@
 // exists in assets/certificates/ (ask Claude to add the file to the repo
 // first — see README, "Certificate images"). If that metadata key is
 // set, this endpoint appends it to the images array as a second photo.
+//
+// A Product can also be listed with its price hidden — set Metadata key
+// `price_tbd` to `true` while pricing isn't final yet. The underlying
+// Stripe Price still exists (so sorting and the record itself work
+// normally), but the front end shows "Available soon" instead of a
+// number and hides the reserve flow entirely, since nobody should save
+// a card against a price that isn't settled.
 
 import Stripe from 'stripe';
 
@@ -59,6 +66,7 @@ export default async function handler(req, res) {
           images,
           amount: p.default_price.unit_amount,
           currency: p.default_price.currency,
+          priceTbd: !!(p.metadata && p.metadata.price_tbd === 'true'),
         };
       })
       .sort((a, b) => a.amount - b.amount);

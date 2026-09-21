@@ -36,7 +36,7 @@
       '<h3 class="shop-card__name"></h3>' +
       '<p class="shop-card__desc"></p>' +
       '<p class="shop-card__price"></p>' +
-      '<span class="shop-card__cta">See details &amp; reserve</span>' +
+      '<span class="shop-card__cta"></span>' +
       '</div>' +
       '</a>';
 
@@ -44,7 +44,14 @@
     if (img) img.src = primaryImage;
     li.querySelector('.shop-card__name').textContent = item.name;
     li.querySelector('.shop-card__desc').textContent = item.description || '';
-    li.querySelector('.shop-card__price').textContent = money(item.amount, item.currency);
+    if (item.priceTbd) {
+      li.querySelector('.shop-card__price').innerHTML = '<span class="tbd">Price &mdash; not final yet</span>';
+    } else {
+      li.querySelector('.shop-card__price').textContent = money(item.amount, item.currency);
+    }
+    li.querySelector('.shop-card__cta').textContent = item.priceTbd
+      ? 'See details'
+      : 'See details & reserve';
 
     return li;
   }

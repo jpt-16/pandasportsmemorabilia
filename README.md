@@ -130,6 +130,19 @@ once there's more than one. Metadata itself isn't image-capped, so this
 works entirely within Stripe's existing product record — no separate
 content system.
 
+### Pricing not settled yet
+
+Sometimes a piece is listed before its price is final. Set a **Metadata**
+entry on the Stripe Product: key `price_tbd`, value `true`. The Price
+object underneath is untouched (so it still sorts normally and nothing
+breaks if you forget to unset the flag later), but `api/products.js`
+passes a `priceTbd: true` flag to the front end, which shows a "Price —
+not final yet" badge instead of a dollar amount on both `shop.html` and
+`product.html`, and hides the "Reserve this item" button and the whole
+order form entirely — nobody should save a card against a price that
+isn't settled. Remove the metadata key (or set it to anything other than
+`true`) once the price is locked in.
+
 ### Homepage spotlight
 
 `index.html` features one specific item — its Stripe product id is
