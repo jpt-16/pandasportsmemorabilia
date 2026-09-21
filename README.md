@@ -1,11 +1,11 @@
 # Panda Sports Memorabilia
 
-A site for Panda Sports Memorabilia, still pre-launch in the sense that it's
-waiting on real, photographed inventory — but the plumbing to actually sell
-something is now real, not a placeholder. The homepage explains the
-proposition and collects email addresses (see "Email signups" below); the
-Shop page lists and sells whatever's currently in stock via Stripe (see
-"Shop & checkout" below). The pages themselves are still plain static HTML
+A site for Panda Sports Memorabilia. It's live — the shop actually sells
+whatever's currently in stock via Stripe (see "Shop & checkout" below),
+one item at a time as inventory comes in. The homepage explains the
+proposition, links straight into the shop, and also collects email
+addresses for new-arrival alerts (see "Email signups" below). The pages
+themselves are still plain static HTML
 with no build step — open `index.html` directly, or serve the folder with
 any static host, and everything renders. What needs Vercel specifically is
 the serverless *backend*: `npm install` (Vercel runs this automatically on
@@ -129,6 +129,19 @@ swipeable set (plain CSS scroll-snap, no library) with dot indicators
 once there's more than one. Metadata itself isn't image-capped, so this
 works entirely within Stripe's existing product record — no separate
 content system.
+
+### Pricing not settled yet
+
+Sometimes a piece is listed before its price is final. Set a **Metadata**
+entry on the Stripe Product: key `price_tbd`, value `true`. The Price
+object underneath is untouched (so it still sorts normally and nothing
+breaks if you forget to unset the flag later), but `api/products.js`
+passes a `priceTbd: true` flag to the front end, which shows a "Price —
+not final yet" badge instead of a dollar amount on both `shop.html` and
+`product.html`, and hides the "Reserve this item" button and the whole
+order form entirely — nobody should save a card against a price that
+isn't settled. Remove the metadata key (or set it to anything other than
+`true`) once the price is locked in.
 
 ### Homepage spotlight
 

@@ -45,10 +45,20 @@
       }
 
       section.querySelector('.spotlight__title').textContent = item.name;
-      section.querySelector('.spotlight__desc').textContent =
-        'One of one. Framed, Beckett-authenticated, and gone for good the moment someone reserves it — no restock, no second jersey.';
-      section.querySelector('.spotlight__price').textContent = money(item.amount, item.currency);
-      section.querySelector('.spotlight__cta').href = 'product.html?id=' + encodeURIComponent(item.id);
+
+      var cta = section.querySelector('.spotlight__cta');
+      cta.href = 'product.html?id=' + encodeURIComponent(item.id);
+
+      if (item.priceTbd) {
+        section.querySelector('.spotlight__desc').textContent =
+          'One of one. Framed and Beckett-authenticated — pricing isn’t final yet, but you can see every photo now.';
+        section.querySelector('.spotlight__price').innerHTML = '<span class="tbd">Price &mdash; not final yet</span>';
+        cta.childNodes[0].textContent = 'See the full piece ';
+      } else {
+        section.querySelector('.spotlight__desc').textContent =
+          'One of one. Framed, Beckett-authenticated, and gone for good the moment someone reserves it — no restock, no second jersey.';
+        section.querySelector('.spotlight__price').textContent = money(item.amount, item.currency);
+      }
 
       section.hidden = false;
     })
