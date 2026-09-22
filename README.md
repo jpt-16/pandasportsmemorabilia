@@ -383,8 +383,10 @@ explicitly rather than inheriting a host background.
   any page, but publicly reachable at its own URL — and the likely source
   of a Google result surfacing the old name). The GitHub repo has since
   been renamed too, to `jpt-16/pandasportsmemorabilia`.
-- **The family is Josh, Jake, Nolan and Liam Twohig** — it is family-run, and
-  the site says that and no more. Do not reintroduce the family structure,
+- **The family is Josh, Jake, Nolan and Liam Twohig** — the site itself only
+  ever names them by first name (last names were deliberately pulled from
+  every page), and it's family-run and says that and no more. Do not
+  reintroduce the last name, the family structure,
   the fact that it runs alongside other jobs, or anything else that frames
   the shop as small or part-time: it reads as a disclaimer, not as candour,
   and it costs more trust than the honesty buys.
