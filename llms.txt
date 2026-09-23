@@ -1,0 +1,12 @@
+# Panda Sports Memorabilia
+
+> A family-run shop selling authentic sports memorabilia — signed jerseys, balls, game-used gear and photography — at one all-inclusive price, checked in hand before it's ever listed. Reserve an item and your card is saved securely with Stripe; it's only charged once your order actually ships. Five percent of every sale goes to a cancer charity or foundation of our choice.
+
+## Sections
+
+- [Shop](https://www.pandasportsmemorabilia.com/shop): what's currently listed, one of each
+- [About](https://www.pandasportsmemorabilia.com/about): why the shop exists and how it's run
+- [FAQ](https://www.pandasportsmemorabilia.com/faq): authentication, shipping, sales policy and payment
+- [Refund policy](https://www.pandasportsmemorabilia.com/refunds): all sales are final
+- [Terms](https://www.pandasportsmemorabilia.com/terms): the rules for using the site and buying from us
+- [Privacy policy](https://www.pandasportsmemorabilia.com/privacy): what we collect and why
