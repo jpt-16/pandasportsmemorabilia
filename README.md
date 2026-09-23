@@ -24,6 +24,8 @@ faq.html               authentication, shipping, sales policy, payment
 privacy.html           what we collect, cookies, your rights
 refunds.html           all sales final — no refunds, returns or exchanges
 terms.html             the rules for using the site and buying from us
+sitemap.xml            static list of the real pages, for Search Console / crawlers
+robots.txt              allows everything, points at sitemap.xml
 assets/css/styles.css  design tokens + every component style
 assets/js/main.js      mobile menu, email signups, FAQ accordions
 assets/js/shop.js      shop.html only — fetches products, renders the browsable grid
@@ -437,6 +439,23 @@ the same letter-spacing carries over fine, but it was tuned by eye for the
 old word, so nudge it if it ever looks loose or tight against the panda
 mark. Anton is headline and wordmark only, per the handoff — never body
 copy. Archivo still sets the hero and section headings.
+
+## Sitemap & robots.txt
+
+`sitemap.xml` and `robots.txt` sit at the repo root, served as static files
+at `/sitemap.xml` and `/robots.txt` (that's what Search Console needs).
+The sitemap only lists the real, canonical pages a search engine should
+index — home, shop, about, faq, terms, privacy, refunds — using the clean
+URLs `vercel.json`'s `cleanUrls: true` actually serves (`/shop`, not
+`/shop.html`; these match every page's own `og:url` meta tag). It
+deliberately leaves out `product.html`, since a bare `/product` with no
+`?id=` just shows a "no item was specified" state and there's no static
+list of every product id to enumerate (items come and go via Stripe, not
+a build step), and `shop-success.html`, since that's a post-reservation
+confirmation page, not something search should send anyone to. If Search
+Console still can't fetch it after a deploy, check the URL is exactly
+`https://www.pandasportsmemorabilia.com/sitemap.xml` in the Search
+Console property, not a `www.`-mismatched or `http://` variant.
 
 ## A note on caching
 
