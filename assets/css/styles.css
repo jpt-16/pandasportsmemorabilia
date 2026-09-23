@@ -377,6 +377,7 @@ button,input{font:inherit;color:inherit}
   letter-spacing:-.015em;color:var(--paper);text-wrap:balance;margin-bottom:1.3rem;
 }
 .pagehead__title em{font-style:italic;font-weight:500;color:var(--green-lite)}
+.pagehead__cta{margin-top:1.6rem}
 
 .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;margin-bottom:1.5rem;
   font:500 .68rem/1 var(--cond);letter-spacing:.2em;text-transform:uppercase}
@@ -667,6 +668,10 @@ textarea)[aria-invalid="true"]{border-color:var(--warn);box-shadow:0 0 0 3px rgb
 .shop-card__cta{margin-top:.4rem;justify-self:start;font:600 .78rem/1 var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--link)}
 .shop-legal{margin-top:2rem;font-size:.78rem;line-height:1.6;color:var(--fg-dim);max-width:68ch}
 .shop-legal a{color:var(--link);text-decoration:underline;text-underline-offset:3px}
+.shop-explainer{margin-top:2.8rem;padding-top:2rem;border-top:1px solid var(--rule);max-width:68ch}
+.shop-explainer .secthead__title{font-size:1.5rem;margin-bottom:.9rem}
+.shop-explainer p{font-size:.95rem;line-height:1.65;color:var(--fg-dim);margin-bottom:.9rem}
+.shop-explainer a{color:var(--link);text-decoration:underline;text-underline-offset:3px}
 @media (max-width:1000px){.shop-grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.shop-grid{grid-template-columns:1fr}}
 
