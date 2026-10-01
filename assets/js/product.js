@@ -69,8 +69,8 @@
     if (crumb) crumb.textContent = item.name;
 
     var buyAreaHtml = item.priceTbd
-      ? '<p class="product__tbd">Price not final yet &mdash; check back soon, or ' +
-        '<a href="index.html#notify">leave your email</a> to hear when it\'s set.</p>'
+      ? '<p class="product__tbd">Because of the uniqueness of this item, please reach out to us by email if you\'re interested in purchasing &mdash; we\'re currently working on setting a price for the website. ' +
+        '<a href="mailto:support@pandasportsmemorabilia.com?subject=' + encodeURIComponent('Inquiry: ' + item.name) + '">support@pandasportsmemorabilia.com</a></p>'
       : '<button class="btn btn--primary product__buy" type="button">Reserve this item</button>' +
         '<form class="order-form" hidden>' +
         '  <label class="sr">Full name</label>' +
@@ -123,7 +123,7 @@
     root.querySelector('.product__name').textContent = item.name;
     root.querySelector('.product__desc').textContent = item.description || '';
     if (item.priceTbd) {
-      root.querySelector('.product__price').innerHTML = '<span class="tbd">Price &mdash; not final yet</span>';
+      root.querySelector('.product__price').innerHTML = '<span class="tbd">Inquire by email</span>';
     } else {
       root.querySelector('.product__price').textContent = money(item.amount, item.currency);
     }

@@ -636,6 +636,8 @@ textarea)[aria-invalid="true"]{border-color:var(--warn);box-shadow:0 0 0 3px rgb
 .coming span{font-size:.84rem;line-height:1.45;color:var(--fg-dim)}
 
 /* ---------- shop ---------- */
+.shop-notice{margin:0 0 2rem;padding:1.1rem 1.3rem;background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--r);font-size:.95rem;line-height:1.6;color:var(--fg-dim)}
+.shop-notice a{color:var(--link);text-decoration:underline;text-underline-offset:3px}
 .shop-state{padding:2.4rem 0;text-align:center;color:var(--fg-dim);font-size:1.02rem;line-height:1.6}
 .shop-state[data-state="error"]{color:var(--warn)}
 .shop-state a{color:var(--link);text-decoration:underline;text-underline-offset:3px}
