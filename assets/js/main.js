@@ -1,6 +1,6 @@
 /* Panda Sports Memorabilia — site behaviour.
-   Three small jobs: the mobile menu, the email signups, and the FAQ
-   accordions. No dependencies. */
+   Four small jobs: the mobile menu, the email signups, the contact form
+   and the FAQ accordions. No dependencies. */
 (function () {
   'use strict';
 
@@ -99,6 +99,86 @@
       }
     });
   });
+
+  /* ---------- contact form (homepage #contact) ----------
+     Posts to /api/contact, which emails the question to support@ via
+     Resend with Reply-To set to the visitor. Phone is optional — when
+     it's given, the notification asks us to call them back. */
+  var contact = document.getElementById('contact-form');
+  if (contact) {
+    var fields = {
+      name: contact.querySelector('[name="name"]'),
+      email: contact.querySelector('[name="email"]'),
+      phone: contact.querySelector('[name="phone"]'),
+      message: contact.querySelector('[name="message"]'),
+      company: contact.querySelector('[name="company"]')
+    };
+    var cMsg = contact.querySelector('.signup__msg');
+    var cButton = contact.querySelector('button[type="submit"]');
+
+    var fail = function (field, text) {
+      if (field) {
+        field.setAttribute('aria-invalid', 'true');
+        field.focus();
+      }
+      cMsg.dataset.state = 'error';
+      cMsg.textContent = text;
+    };
+
+    contact.addEventListener('submit', function (e) {
+      e.preventDefault();
+      ['name', 'email', 'phone', 'message'].forEach(function (k) {
+        fields[k].removeAttribute('aria-invalid');
+      });
+
+      var data = {
+        name: fields.name.value.trim(),
+        email: fields.email.value.trim(),
+        phone: fields.phone.value.trim(),
+        message: fields.message.value.trim(),
+        company: fields.company ? fields.company.value : ''
+      };
+
+      if (!data.name) return fail(fields.name, 'Add your name so we know who to ask for.');
+      if (!valid.test(data.email)) return fail(fields.email, 'That address looks incomplete — check for a typo and try again.');
+      if (data.phone && data.phone.replace(/\D/g, '').length < 7) return fail(fields.phone, 'That phone number looks too short — check it, or leave it blank.');
+      if (!data.message) return fail(fields.message, 'Add your question.');
+
+      cButton.disabled = true;
+      delete cMsg.dataset.state;
+      cMsg.textContent = 'Sending\u2026';
+
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(function (response) {
+          return response.json().then(function (body) {
+            return { httpOk: response.ok, data: body };
+          });
+        })
+        .then(function (result) {
+          if (result.httpOk && result.data && result.data.ok) {
+            contact.reset();
+            cButton.disabled = false;
+            cMsg.dataset.state = 'ok';
+            cMsg.textContent = data.phone
+              ? "Got it — we'll give you a call soon."
+              : "Got it — we'll reply by email soon.";
+            return;
+          }
+          throw new Error((result.data && result.data.message) || '');
+        })
+        .catch(function (err) {
+          cButton.disabled = false;
+          cMsg.dataset.state = 'error';
+          cMsg.textContent =
+            err.message ||
+            "That didn't go through \u2014 try again in a moment, or email support@pandasportsmemorabilia.com directly.";
+        });
+    });
+  }
 })();
 
 /* FAQ / consign accordions (<details class nothing, targeted via .qa).

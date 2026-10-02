@@ -84,6 +84,7 @@
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5.4l3.4 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.8l7.2 2.8v6c0 4.3-3 8.1-7.2 9.6-4.2-1.5-7.2-5.3-7.2-9.6v-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.6 12l2.4 2.4 4.4-4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-tag" viewBox="0 0 24 24"><path d="M11.4 2.8H21V12.4l-9.2 9.2a2 2 0 0 1-2.9 0l-6.5-6.5a2 2 0 0 1 0-2.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="16.6" cy="7.4" r="1.9" fill="currentColor"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 3.2h3l1.5 4.2-2 1.3a11 11 0 0 0 6.2 6.2l1.3-2 4.2 1.5v3a2 2 0 0 1-2.2 2A17.6 17.6 0 0 1 4.6 5.4a2 2 0 0 1 2-2.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
@@ -175,25 +176,25 @@
     <div class="wrap">
       <header class="secthead">
         <p class="eyebrow eyebrow--accent">Why Panda</p>
-        <h2 class="secthead__title">Three things we intend to get right</h2>
-        <p class="secthead__sub">We find cool stuff and sell it at a reasonable price.</p>
+        <h2 class="secthead__title">What makes Panda Sports different</h2>
+        <p class="secthead__sub">We find cool stuff and sell it at a reasonable price &mdash; and you can talk to a real person about any of it.</p>
       </header>
 
       <ul class="creed creed--three">
         <li>
+          <svg class="creed__icon" aria-hidden="true" focusable="false"><use href="#i-tag"></use></svg>
+          <h3>Our pricing</h3>
+          <p>Priced for fans, not auction houses. One all-inclusive price &mdash; standard shipping, tax, fees and insurance already in it, nothing added later unless you request faster, expedited shipping. Your card isn't charged until your order ships.</p>
+        </li>
+        <li>
+          <svg class="creed__icon" aria-hidden="true" focusable="false"><use href="#i-phone"></use></svg>
+          <h3>We'll call you</h3>
+          <p>Reach out and leave your phone number, and one of us will call you back &mdash; to talk through a piece, its paperwork, or anything else. A real person from the family, not a call center. <a href="#contact">Leave your number</a>.</p>
+        </li>
+        <li>
           <svg class="creed__icon" aria-hidden="true" focusable="false"><use href="#i-shield"></use></svg>
           <h3>Say what a piece actually is</h3>
           <p>Every listing states exactly what documentation a piece carries, even when the answer is &ldquo;none.&rdquo; We never write our own certificates &mdash; only real, third-party paperwork counts.</p>
-        </li>
-        <li>
-          <svg class="creed__icon" aria-hidden="true" focusable="false"><use href="#i-doc"></use></svg>
-          <h3>Show you the whole picture</h3>
-          <p>Condition, wear, what's included and what isn't &mdash; stated plainly. If a piece has a flaw, you'll know before you buy it.</p>
-        </li>
-        <li>
-          <svg class="creed__icon" aria-hidden="true" focusable="false"><use href="#i-tag"></use></svg>
-          <h3>Price it for fans</h3>
-          <p>One all-inclusive price, shown up front before you ever reserve it &mdash; standard shipping, tax, fees and insurance are already in it, nothing added later unless you request faster, expedited shipping. Your card isn't charged until your order ships, and we get it moving fast once it does.</p>
         </li>
       </ul>
     </div>
@@ -267,6 +268,36 @@
       </ul>
 
       <a class="btn btn--ghost" href="about.html">More about us <svg class="btn__arrow" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg></a>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── CONTACT ───────────────────────── -->
+  <section class="section section--vault" id="contact">
+    <div class="wrap">
+      <div class="drop">
+        <div class="drop__copy">
+          <p class="eyebrow eyebrow--accent">Get in touch</p>
+          <h2 class="drop__title">Questions? We'll call you back</h2>
+          <p>Ask about a piece, its price or its paperwork. Leave your phone number and one of us will give you a call &mdash; or skip it and we'll reply by email.</p>
+        </div>
+        <form class="contact" id="contact-form" novalidate>
+          <label class="sr" for="contact-name">Your name</label>
+          <input id="contact-name" name="name" type="text" autocomplete="name" placeholder="Your name" maxlength="120" required>
+          <label class="sr" for="contact-email">Email address</label>
+          <input id="contact-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="200" required>
+          <label class="sr" for="contact-phone">Phone number (optional)</label>
+          <input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone (optional)" maxlength="40">
+          <label class="sr" for="contact-message">Your question</label>
+          <textarea id="contact-message" name="message" rows="4" placeholder="Your question" maxlength="5000" required></textarea>
+          <button class="btn btn--primary" type="submit">Send</button>
+          <p class="signup__msg" role="status"></p>
+          <p class="signup__fine">We only use your details to answer you. We never sell or share them.</p>
+          <div class="hp" aria-hidden="true">
+            <label for="company-contact">Leave this field blank</label>
+            <input id="company-contact" name="company" type="text" tabindex="-1" autocomplete="off">
+          </div>
+        </form>
+      </div>
     </div>
   </section>
 
@@ -361,7 +392,7 @@
 </footer>
 <!-- CHROME:FOOT:END -->
 <!-- BODY:END -->
-<script src="assets/js/main.js?v=2"></script>
+<script src="assets/js/main.js?v=3"></script>
 <script src="assets/js/spotlight.js?v=1"></script>
 </body>
 </html>

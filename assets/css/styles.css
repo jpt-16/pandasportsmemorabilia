@@ -624,6 +624,20 @@ textarea)[aria-invalid="true"]{border-color:var(--warn);box-shadow:0 0 0 3px rgb
 .section--vault .signup input{border-color:rgba(244,244,241,.28);background:rgba(244,244,241,.05)}
 .signup--stack{margin-top:0}
 
+/* ---------- contact form ---------- */
+.contact{display:grid;gap:.55rem}
+.contact input,.contact textarea{
+  width:100%;min-width:0;background:var(--panel);color:var(--fg);
+  border:1.5px solid rgba(18,19,21,.26);border-radius:var(--r);padding:1rem 1.05rem;font:400 .98rem var(--body);
+}
+.contact textarea{resize:vertical;min-height:7rem;line-height:1.5}
+.contact input::placeholder,.contact textarea::placeholder{color:var(--fg-dim)}
+.contact input:focus,.contact textarea:focus{outline:none;border-color:var(--accentfg);box-shadow:0 0 0 3px rgba(64,183,91,.18)}
+.contact [aria-invalid="true"]{border-color:var(--warn);box-shadow:0 0 0 3px rgba(224,69,58,.2)}
+.contact .btn{justify-content:center}
+.section--vault .contact input,.section--vault .contact textarea{border-color:rgba(244,244,241,.28);background:rgba(244,244,241,.05)}
+.creed p a{color:var(--link);text-decoration:underline;text-underline-offset:2px}
+
 /* ---------- what's coming ---------- */
 .coming{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:2.2rem}
 .coming li{
@@ -636,6 +650,8 @@ textarea)[aria-invalid="true"]{border-color:var(--warn);box-shadow:0 0 0 3px rgb
 .coming span{font-size:.84rem;line-height:1.45;color:var(--fg-dim)}
 
 /* ---------- shop ---------- */
+.shop-notice{margin:0 0 2rem;padding:1.1rem 1.3rem;background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--r);font-size:.95rem;line-height:1.6;color:var(--fg-dim)}
+.shop-notice a{color:var(--link);text-decoration:underline;text-underline-offset:3px}
 .shop-state{padding:2.4rem 0;text-align:center;color:var(--fg-dim);font-size:1.02rem;line-height:1.6}
 .shop-state[data-state="error"]{color:var(--warn)}
 .shop-state a{color:var(--link);text-decoration:underline;text-underline-offset:3px}

@@ -51,8 +51,8 @@
 
       if (item.priceTbd) {
         section.querySelector('.spotlight__desc').textContent =
-          'One of one. Framed and Beckett-authenticated — pricing isn’t final yet, but you can see every photo now.';
-        section.querySelector('.spotlight__price').innerHTML = '<span class="tbd">Price &mdash; not final yet</span>';
+          'One of one. Framed and Beckett-authenticated — email us if you’re interested — we’re still setting the website price.';
+        section.querySelector('.spotlight__price').innerHTML = '<span class="tbd">Inquire by email</span>';
         cta.childNodes[0].textContent = 'See the full piece ';
       } else {
         section.querySelector('.spotlight__desc').textContent =

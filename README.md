@@ -133,6 +133,17 @@ once there's more than one. Metadata itself isn't image-capped, so this
 works entirely within Stripe's existing product record — no separate
 content system.
 
+### Contact form (call-back requests)
+
+The homepage `#contact` section posts to `api/contact.js`, which emails
+the visitor's name, email, optional phone number and question to
+`RESEND_NOTIFY_TO` (default support@) through Resend, with Reply-To set
+to the visitor. When a phone number is given, the subject reads
+"Call back: <name> (<phone>)" so those stand out in the inbox. It uses
+the same `RESEND_API_KEY` / `RESEND_FROM` as the signup forms, so no new
+environment variables are needed. Messages aren't stored anywhere else —
+the email is the record.
+
 ### Pricing not settled yet
 
 Sometimes a piece is listed before its price is final. Set a **Metadata**

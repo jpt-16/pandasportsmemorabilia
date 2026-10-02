@@ -45,7 +45,7 @@
     li.querySelector('.shop-card__name').textContent = item.name;
     li.querySelector('.shop-card__desc').textContent = item.description || '';
     if (item.priceTbd) {
-      li.querySelector('.shop-card__price').innerHTML = '<span class="tbd">Price &mdash; not final yet</span>';
+      li.querySelector('.shop-card__price').innerHTML = '<span class="tbd">Inquire by email</span>';
     } else {
       li.querySelector('.shop-card__price').textContent = money(item.amount, item.currency);
     }
